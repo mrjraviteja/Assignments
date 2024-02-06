@@ -1,8 +1,6 @@
 package com.mrj.learningportal.entity;
 
-
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -17,38 +15,22 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name="courses")
-public class CourseEntity {
+@Table(name="categories")
+public class CategoryEntity {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="course_id")
-	private long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name="category_id")
+	private Long id;
 	
-	@Column(name="course_name")
+	@Column(name="category_name")
 	private String name;
-	
-	@Column(name="course_author")
-	private String author;
-	
-	@Column(name="course_desc")
-	private String desc;
-	
-	@OneToMany(mappedBy = "courseEntity")
-	private List<RegistrationEntity> enrolledUsers;
-	
-	@ManyToOne
-	@JoinColumn(name="category_id")
-	private CategoryEntity categoryEntity;
 	
 	@JsonFormat(pattern="MM/dd/yyyy HH:mm")
 	@DateTimeFormat(pattern = "MM/dd/yyyy HH:mm")

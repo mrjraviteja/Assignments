@@ -28,7 +28,7 @@ import lombok.Data;
 @Table(name="users")
 public class UserEntity {
 	
-	private enum Roles { ADMIN, USER, AUTHOR }
+	public enum Roles { ADMIN, LEARNER, AUTHOR }
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
