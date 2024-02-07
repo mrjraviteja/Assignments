@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -26,10 +27,12 @@ public class RegistrationEntity {
 	private Long id;
 	
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name="user_id")
 	private UserEntity userEntity;
 	
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name="course_id")
 	private CourseEntity courseEntity;
 	

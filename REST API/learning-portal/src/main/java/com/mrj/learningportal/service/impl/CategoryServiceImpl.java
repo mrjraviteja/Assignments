@@ -1,6 +1,7 @@
 package com.mrj.learningportal.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,11 @@ public class CategoryServiceImpl implements CategoryService{
 	@Override
 	public CategoryEntity addNewCategory(CategoryEntity categoryEntity) {
 		return categoryRepository.save(categoryEntity);
+	}
+
+	@Override
+	public Optional<CategoryEntity> findCategoryById(Long id) {
+		return categoryRepository.findById(id);
 	}
 	
 }

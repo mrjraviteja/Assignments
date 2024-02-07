@@ -3,6 +3,8 @@ package com.mrj.learningportal.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.mrj.learningportal.dto.CourseResponseDto;
+import com.mrj.learningportal.dto.RegistrationResponseDto;
 import com.mrj.learningportal.entity.CourseEntity;
 import com.mrj.learningportal.entity.RegistrationEntity;
 import com.mrj.learningportal.entity.UserEntity;
@@ -14,5 +16,6 @@ public interface RegistrationService {
 	public boolean checkRegistrationByUserAndCourse(UserEntity userEntity,CourseEntity courseEntity);
 	public boolean checkRegistrationByUser(UserEntity userEntity);
 	public List<RegistrationEntity> findRegistrationByUserEntity(UserEntity userEntity);
-	public List<CourseEntity> findEnrolledCoursesByUser(UserEntity userEntity);
+	public List<CourseResponseDto> findEnrolledCoursesByUser(UserEntity userEntity);
+	public RegistrationResponseDto mapRegistrationEntitytoDto(RegistrationEntity registrationEntity);
 }

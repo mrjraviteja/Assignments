@@ -36,7 +36,20 @@ public class UserController {
 	@GetMapping
 	public ResponseEntity<Object> showAllUsers()
 	{
-		return ResponseEntity.status(HttpStatus.OK).body(userService.findAllUsers());
+		List<UserEntity> users = userService.findAllUsers();
+		List<UserResponseDto> userresp = users.stream().map(this::userEntitytoDtoMapper).collect(Collectors.toList());
+		return ResponseEntity.status(HttpStatus.OK).body(userresp);
+		
+	}
+	
+	private UserResponseDto userEntitytoDtoMapper(UserEntity userEntity)
+	{
+		UserResponseDto userDto = new UserResponseDto();
+		userDto.setId(userEntity.getId());
+		userDto.setName(userEntity.getName());
+		userDto.setRole(userEntity.getRole());
+		userDto.setEnrolledCourses((userEntity.getEnrolledCourses().stream().map(pred -> pred.getCourseEntity()).collect(Collectors.toList())).stream().map(courseService::mapCourseEntitytoCourseDto).collect(Collectors.toList()));
+		return userDto;
 	}
 	
 	@PostMapping
@@ -133,40 +146,5 @@ public class UserController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error enrolling user in the course.");
 		}
 	}
-	
-	@PostMapping("/{id}/favourite/{courseid}")
-	public ResponseEntity<Object> favouriteCourse(@PathVariable(value="id") Long id,@PathVariable(value="courseid") Long courseId)
-	{
-		Optional<UserEntity> userEntity = userService.findUserById(id);
-		Optional<CourseEntity> courseEntity = courseService.findCourseById(courseId);
-		
-		if(userEntity.isPresent() && courseEntity.isPresent())
-		{
-			UserEntity user = userEntity.get();
-			CourseEntity course = courseEntity.get();
-			
-			if(registrationService.checkRegistrationByUserAndCourse(user, course))
-			{
-				UserResponseDto userresp = new UserResponseDto();
-				userresp.setId(user.getId());
-				userresp.setName(user.getName());
-				userresp.setRole(user.getRole());
-				userresp.setEnrolledCourses(user.getEnrolledCourses().stream().map(pred -> pred.getCourseEntity()).collect(Collectors.toList()));
-				List<CourseEntity> favcourses = user.getFavouriteCourses().stream().map(pred -> pred.getCourseEntity()).collect(Collectors.toList());
-				favcourses.add(course);
-				userresp.setFavouriteCourses(favcourses);
-				return ResponseEntity.status(HttpStatus.OK).body(userresp);
-			}
-			else
-			{
-				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not enrolled in the course");
-			}
-		}
-		else
-		{
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Course not found!");
-		}
-	}
-	
 	
 }

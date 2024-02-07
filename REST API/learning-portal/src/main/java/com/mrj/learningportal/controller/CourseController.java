@@ -38,9 +38,10 @@ public class CourseController {
 		
 		if(courses != null && !courses.isEmpty())
 		{
-			return ResponseEntity.status(HttpStatus.OK).body(courses);
+			List<CourseResponseDto> courseresp = courses.stream().map(courseService::mapCourseEntitytoCourseDto).collect(Collectors.toList());
+			return ResponseEntity.status(HttpStatus.OK).body(courseresp);
 		}
-		return ResponseEntity.status(HttpStatus.OK).body("No courses found!");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No courses found!");
 	}
 	
 	@PostMapping
@@ -64,9 +65,12 @@ public class CourseController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(courseService.addCourse(courseEntity));
 	}
 	
-	@PutMapping
-	public ResponseEntity<Object> updateCourse(@RequestBody CourseEntity courseEntity)
+	@PutMapping("/{id}")
+	public ResponseEntity<Object> updateCourse(@PathVariable(value = "id") Long id, @RequestBody CourseRequestDto courseRequestDto)
 	{
+		CourseEntity courseEntity = courseService.findCourseByAuthor(courseRequestDto.getAuthor());
+		courseEntity.setName(courseRequestDto.getName());
+		courseEntity.setDesc(courseRequestDto.getDesc());
 		return ResponseEntity.status(HttpStatus.ACCEPTED).body(courseService.addCourse(courseEntity));
 	}
 	
@@ -91,13 +95,6 @@ public class CourseController {
 		{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not found!");
 		}	
-	}
-	
-	@GetMapping("/categories/{category}")
-	public List<CourseEntity> showCoursesByCategory(@PathVariable(value = "category") String categoryName)
-	{
-		CategoryEntity categoryEntity = categoryService.findCategoryByName(categoryName);
-		return courseService.findCourseByCategory(categoryEntity);
 	}
 	
 }

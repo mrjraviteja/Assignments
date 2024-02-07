@@ -45,9 +45,6 @@ public class UserEntity {
 	@OneToMany(mappedBy="userEntity")
 	private List<RegistrationEntity> enrolledCourses;
 	
-	@OneToMany(mappedBy="userEntity")
-	private List<RegistrationEntity> favouriteCourses;
-	
 	@JsonFormat(pattern="MM/dd/yyyy HH:mm")
 	@DateTimeFormat(pattern = "MM/dd/yyyy HH:mm")
 	@CreatedDate

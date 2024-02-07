@@ -11,4 +11,5 @@ import com.mrj.learningportal.entity.CourseEntity;
 @Repository
 public interface CourseRepository extends JpaRepository<CourseEntity,Long>{
 	List<CourseEntity> findByCategoryEntity(CategoryEntity categoryEntity);
+	CourseEntity findByAuthor(String author);
 }

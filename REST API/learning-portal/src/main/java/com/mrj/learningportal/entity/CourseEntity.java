@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -47,6 +48,7 @@ public class CourseEntity {
 	private List<RegistrationEntity> enrolledUsers;
 	
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name="category_id")
 	private CategoryEntity categoryEntity;
 	

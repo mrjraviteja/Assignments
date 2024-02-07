@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import com.mrj.learningportal.entity.UserEntity;
 import com.mrj.learningportal.repository.UserRepository;
-import com.mrj.learningportal.service.CategoryService;
-import com.mrj.learningportal.service.CourseService;
 import com.mrj.learningportal.service.UserService;
 
 import lombok.AllArgsConstructor;

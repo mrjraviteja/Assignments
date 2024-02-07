@@ -6,11 +6,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.mrj.learningportal.dto.CourseResponseDto;
+import com.mrj.learningportal.dto.RegistrationResponseDto;
 import com.mrj.learningportal.entity.CourseEntity;
 import com.mrj.learningportal.entity.RegistrationEntity;
 import com.mrj.learningportal.entity.UserEntity;
 import com.mrj.learningportal.repository.RegistrationRepository;
-import com.mrj.learningportal.service.CategoryService;
 import com.mrj.learningportal.service.CourseService;
 import com.mrj.learningportal.service.RegistrationService;
 
@@ -20,6 +21,7 @@ import lombok.AllArgsConstructor;
 @Service
 public class RegistrationServiceImpl implements RegistrationService{
 
+	private CourseService courseService;
 	private RegistrationRepository registrationRepository;
 	
 	@Override
@@ -69,9 +71,19 @@ public class RegistrationServiceImpl implements RegistrationService{
 	}
 
 	@Override
-	public List<CourseEntity> findEnrolledCoursesByUser(UserEntity userEntity) {
+	public List<CourseResponseDto> findEnrolledCoursesByUser(UserEntity userEntity) {
 		List<RegistrationEntity> registrations = registrationRepository.findByUserEntity(userEntity);
-		return registrations.stream().map(registration -> registration.getCourseEntity()).collect(Collectors.toList());
+		List<CourseEntity> courses = registrations.stream().map(registration -> registration.getCourseEntity()).collect(Collectors.toList());
+		return courses.stream().map(courseService::mapCourseEntitytoCourseDto).collect(Collectors.toList());
+	}
+
+	@Override
+	public RegistrationResponseDto mapRegistrationEntitytoDto(RegistrationEntity registrationEntity) {
+		RegistrationResponseDto registrationDto = new RegistrationResponseDto();
+		registrationDto.setId(registrationEntity.getId());
+		registrationDto.setUserName(registrationEntity.getUserEntity().getName());
+		registrationDto.setCourseName(registrationEntity.getCourseEntity().getName());
+		return registrationDto;
 	}
 	
 }
