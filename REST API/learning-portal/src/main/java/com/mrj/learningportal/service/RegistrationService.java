@@ -18,4 +18,5 @@ public interface RegistrationService {
 	public List<RegistrationEntity> findRegistrationByUserEntity(UserEntity userEntity);
 	public List<CourseResponseDto> findEnrolledCoursesByUser(UserEntity userEntity);
 	public RegistrationResponseDto mapRegistrationEntitytoDto(RegistrationEntity registrationEntity);
+	public void removeRegistration(RegistrationEntity registrationEntity);
 }

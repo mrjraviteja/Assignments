@@ -14,4 +14,5 @@ public interface CourseService {
 	public List<CourseEntity> findCourseByCategory(CategoryEntity categoryEntity);
 	public CourseEntity findCourseByAuthor(String author);
 	public CourseResponseDto mapCourseEntitytoCourseDto(CourseEntity courseEntity);
+	public void deleteCourseById(Long id);
 }

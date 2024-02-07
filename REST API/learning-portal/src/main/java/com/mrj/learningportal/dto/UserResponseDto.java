@@ -13,5 +13,5 @@ public class UserResponseDto {
 	private String name;
 	private UserEntity.Roles role;
 	private List<CourseResponseDto> enrolledCourses;
-	
+	private List<CourseResponseDto> favoriteCourses;
 }

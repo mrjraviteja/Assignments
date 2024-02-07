@@ -12,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -44,7 +45,7 @@ public class CourseEntity {
 	@Column(name="course_desc")
 	private String desc;
 	
-	@OneToMany(mappedBy = "courseEntity")
+	@OneToMany(mappedBy = "courseEntity",cascade = CascadeType.ALL)
 	private List<RegistrationEntity> enrolledUsers;
 	
 	@ManyToOne

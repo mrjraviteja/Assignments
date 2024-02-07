@@ -10,6 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -18,6 +19,9 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -42,8 +46,17 @@ public class UserEntity {
 	@Enumerated(EnumType.STRING)
 	private Roles role;
 	
-	@OneToMany(mappedBy="userEntity")
+	@OneToMany(mappedBy="userEntity",cascade=CascadeType.ALL)
 	private List<RegistrationEntity> enrolledCourses;
+	
+	@ManyToMany
+	@JoinTable(
+	    name = "user_favorite_courses",
+	    joinColumns = @JoinColumn(name = "user_id"),
+	    inverseJoinColumns = @JoinColumn(name = "course_id")
+	)
+	private List<CourseEntity> favoriteCourses;
+
 	
 	@JsonFormat(pattern="MM/dd/yyyy HH:mm")
 	@DateTimeFormat(pattern = "MM/dd/yyyy HH:mm")
