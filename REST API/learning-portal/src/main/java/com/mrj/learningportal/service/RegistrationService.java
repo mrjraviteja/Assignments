@@ -16,7 +16,9 @@ public interface RegistrationService {
 	public boolean checkRegistrationByUserAndCourse(UserEntity userEntity,CourseEntity courseEntity);
 	public boolean checkRegistrationByUser(UserEntity userEntity);
 	public List<RegistrationEntity> findRegistrationByUserEntity(UserEntity userEntity);
+	public List<RegistrationEntity> findRegistrationByCourseEntity(CourseEntity courseEntity);
 	public List<CourseResponseDto> findEnrolledCoursesByUser(UserEntity userEntity);
 	public RegistrationResponseDto mapRegistrationEntitytoDto(RegistrationEntity registrationEntity);
 	public void removeRegistration(RegistrationEntity registrationEntity);
+	public RegistrationEntity getRegistrationByUserAndCourse(UserEntity userEntity,CourseEntity courseEntity);
 }

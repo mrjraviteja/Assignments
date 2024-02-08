@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.mrj.learningportal.dto.UserResponseDto;
+import com.mrj.learningportal.entity.CourseEntity;
 import com.mrj.learningportal.entity.UserEntity;
 import com.mrj.learningportal.repository.UserRepository;
 import com.mrj.learningportal.service.CourseService;
@@ -55,9 +56,10 @@ public class UserServiceImpl implements UserService{
 	    {
 	    	userDto.setEnrolledCourses(userEntity.getEnrolledCourses().stream().map(registration -> courseService.mapCourseEntitytoCourseDto(registration.getCourseEntity())).collect(Collectors.toList()));
 	    }
-	    if(userEntity.getFavoriteCourses() != null)
+	    if(userEntity.getFavouriteCourses() != null)
 	    {
-	    	userDto.setFavoriteCourses(userEntity.getFavoriteCourses().stream().map(courseService::mapCourseEntitytoCourseDto).collect(Collectors.toList()));
+	    	List<CourseEntity> courses = userEntity.getFavouriteCourses().stream().map(pred -> pred.getCourseFavEntity()).collect(Collectors.toList());
+	    	userDto.setFavoriteCourses(courses.stream().map(courseService::mapCourseEntitytoCourseDto).collect(Collectors.toList()));
 	    }
 	    return userDto;
 	}

@@ -14,4 +14,5 @@ import com.mrj.learningportal.entity.UserEntity;
 public interface RegistrationRepository extends JpaRepository<RegistrationEntity, Long>{
 	public RegistrationEntity findByUserEntityAndCourseEntity(UserEntity userEntity,CourseEntity courseEntity);
 	public List<RegistrationEntity> findByUserEntity(UserEntity userEntity);
+	public List<RegistrationEntity> findByCourseEntity(CourseEntity courseEntity);
 }

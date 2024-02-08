@@ -19,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.mrj.learningportal.dto.UserRequestDto;
 import com.mrj.learningportal.dto.UserResponseDto;
 import com.mrj.learningportal.entity.CourseEntity;
+import com.mrj.learningportal.entity.FavouriteEntity;
 import com.mrj.learningportal.entity.RegistrationEntity;
 import com.mrj.learningportal.entity.UserEntity;
 import com.mrj.learningportal.service.CourseService;
+import com.mrj.learningportal.service.FavouriteService;
 import com.mrj.learningportal.service.RegistrationService;
 import com.mrj.learningportal.service.UserService;
 
@@ -36,6 +38,7 @@ public class UserController {
 	
 	private UserService userService;
 	private RegistrationService registrationService;
+	private FavouriteService favouriteService;
 	private CourseService courseService;
 	
 	@GetMapping
@@ -82,6 +85,8 @@ public class UserController {
 			userresp.setName(user.getName());
 			userresp.setRole(user.getRole());
 			userresp.setEnrolledCourses(registrationService.findEnrolledCoursesByUser(user));
+			List<CourseEntity> courses = user.getFavouriteCourses().stream().map(pred -> pred.getCourseFavEntity()).collect(Collectors.toList());
+			userresp.setFavoriteCourses(courses.stream().map(courseService::mapCourseEntitytoCourseDto).collect(Collectors.toList()));
 			logger.info("@UserController - User found!");
 			return ResponseEntity.status(HttpStatus.FOUND).body(userresp);
 		}
@@ -141,6 +146,8 @@ public class UserController {
 					userresp.setName(user.getName());
 					userresp.setRole(user.getRole());
 					userresp.setEnrolledCourses(registrationService.findEnrolledCoursesByUser(user));
+					List<CourseEntity> courses = user.getFavouriteCourses().stream().map(pred -> pred.getCourseFavEntity()).collect(Collectors.toList());
+					userresp.setFavoriteCourses(courses.stream().map(courseService::mapCourseEntitytoCourseDto).collect(Collectors.toList()));
 					logger.info("@UserController - User enrolled in the course.");
 					return ResponseEntity.status(HttpStatus.ACCEPTED).body(userresp);
 				}
@@ -157,6 +164,8 @@ public class UserController {
 					userresp.setName(user.getName());
 					userresp.setRole(user.getRole());
 					userresp.setEnrolledCourses(registrationService.findEnrolledCoursesByUser(user));
+					List<CourseEntity> courses = user.getFavouriteCourses().stream().map(pred -> pred.getCourseFavEntity()).collect(Collectors.toList());
+					userresp.setFavoriteCourses(courses.stream().map(courseService::mapCourseEntitytoCourseDto).collect(Collectors.toList()));
 					logger.info("@UserController - User enrolled in the course.");
 					return ResponseEntity.status(HttpStatus.ACCEPTED).body(userresp);
 				}
@@ -186,11 +195,19 @@ public class UserController {
 	        if (userEntityOptional.isPresent() && courseEntityOptional.isPresent()) {
 	            UserEntity user = userEntityOptional.get();
 	            CourseEntity course = courseEntityOptional.get();
-
-	            if (!user.getFavoriteCourses().contains(course)) {
+	            
 	            	if(registrationService.checkRegistrationByUserAndCourse(user, course))
 	            	{
-	            		user.getFavoriteCourses().add(course);
+	            		if(favouriteService.checkFavouriteByUserAndCourse(user, course))
+	            		{
+	            			logger.info("@UserController - Course is already a favorite.");
+	    	                return ResponseEntity.badRequest().body("Course is already a favorite.");
+	            		}
+	            		FavouriteEntity favourite = new FavouriteEntity();
+	            		favourite.setUserFavEntity(user);
+	            		favourite.setCourseFavEntity(course);
+	            		favouriteService.saveFavourite(favourite);
+	            		user.getFavouriteCourses().add(favourite);
 		                userService.addUser(user);
 		                UserResponseDto userresp = userService.userEntitytoDtoMapper(user);
 		                logger.info("@UserController - User favourited course successfully.");
@@ -201,10 +218,6 @@ public class UserController {
 	            		logger.info("@UserController - User not enrolled in favoriting course.");
 	            		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Enroll into the course first before favoriting!");
 	            	}
-	            } else {
-	            	logger.info("@UserController - Course is already a favorite.");
-	                return ResponseEntity.badRequest().body("Course is already a favorite.");
-	            }
 	        } else {
 	        	logger.info("@UserController - User or course not found.");
 	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Course not found.");
@@ -212,6 +225,52 @@ public class UserController {
 	    } catch (Exception e) {
 	    	logger.info("@UserController - Error favoriting the course.");
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error favoriting the course.");
+	    }
+	}
+	
+	@DeleteMapping("/{userId}/favorite/{courseId}")
+	public ResponseEntity<Object> removeFavouriteCourse(@PathVariable("userId") Long userId,@PathVariable("courseId") Long courseId)
+	{
+		logger.info("@UserController - Removing favorite course for user.");
+		try {
+	        Optional<UserEntity> userEntityOptional = userService.findUserById(userId);
+	        Optional<CourseEntity> courseEntityOptional = courseService.findCourseById(courseId);
+
+	        if (userEntityOptional.isPresent() && courseEntityOptional.isPresent()) {
+	            UserEntity user = userEntityOptional.get();
+	            CourseEntity course = courseEntityOptional.get();
+
+	            	if(registrationService.checkRegistrationByUserAndCourse(user, course))
+	            	{
+	            		if(favouriteService.checkFavouriteByUserAndCourse(user, course))
+	            		{
+	            			FavouriteEntity favourite = favouriteService.getFavouriteByUserAndCourse(user, course);
+	            			user.getFavouriteCourses().remove(favourite);
+	            			course.getFavouriteUsers().remove(favourite);
+	            			favouriteService.removeFavourite(favourite);
+	            			userService.addUser(user);
+	            			UserResponseDto userresp = userService.userEntitytoDtoMapper(user);
+	            			logger.info("@UserController - User course unfavorited successfully.");
+	            			return ResponseEntity.status(HttpStatus.OK).body(userresp);
+	            		}
+	            		else
+	            		{
+	            			logger.info("@UserController - Course not favorited by user.");
+	            			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Course not favourited by user.");
+	            		}
+	            	}
+	            	else
+	            	{
+	            		logger.info("@UserController - User not enrolled in unfavoriting course.");
+	            		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Enroll into the course first before unfavoriting!");
+	            	}
+	        } else {
+	        	logger.info("@UserController - User or course not found.");
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User or Course not found.");
+	        }
+	    } catch (Exception e) {
+	    	logger.info("@UserController - Error favoriting the course.");
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error unfavoriting the course.");
 	    }
 	}
 

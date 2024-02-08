@@ -48,6 +48,9 @@ public class CourseEntity {
 	@OneToMany(mappedBy = "courseEntity",cascade = CascadeType.ALL)
 	private List<RegistrationEntity> enrolledUsers;
 	
+	@OneToMany(mappedBy = "courseFavEntity",cascade = CascadeType.ALL)
+	private List<FavouriteEntity> favouriteUsers;
+	
 	@ManyToOne
 	@JsonIgnore
 	@JoinColumn(name="category_id")

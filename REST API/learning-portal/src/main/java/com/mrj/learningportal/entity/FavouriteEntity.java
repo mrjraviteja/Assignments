@@ -9,7 +9,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +21,7 @@ import lombok.Data;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class RegistrationEntity {
+public class FavouriteEntity {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
@@ -30,12 +29,12 @@ public class RegistrationEntity {
 	@ManyToOne
 	@JsonIgnore
 	@JoinColumn(name="user_id")
-	private UserEntity userEntity;
+	private UserEntity userFavEntity;
 	
 	@ManyToOne
 	@JsonIgnore
 	@JoinColumn(name="course_id")
-	private CourseEntity courseEntity;
+	private CourseEntity courseFavEntity;
 	
 	@JsonFormat(pattern="MM/dd/yyyy HH:mm")
 	@DateTimeFormat(pattern = "MM/dd/yyyy HH:mm")

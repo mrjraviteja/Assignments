@@ -19,9 +19,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -49,14 +46,8 @@ public class UserEntity {
 	@OneToMany(mappedBy="userEntity",cascade=CascadeType.ALL)
 	private List<RegistrationEntity> enrolledCourses;
 	
-	@ManyToMany
-	@JoinTable(
-	    name = "user_favorite_courses",
-	    joinColumns = @JoinColumn(name = "user_id"),
-	    inverseJoinColumns = @JoinColumn(name = "course_id")
-	)
-	private List<CourseEntity> favoriteCourses;
-
+	@OneToMany(mappedBy="userFavEntity",cascade=CascadeType.ALL)
+	private List<FavouriteEntity> favouriteCourses;
 	
 	@JsonFormat(pattern="MM/dd/yyyy HH:mm")
 	@DateTimeFormat(pattern = "MM/dd/yyyy HH:mm")

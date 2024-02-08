@@ -109,5 +109,17 @@ public class RegistrationServiceImpl implements RegistrationService{
 		logger.info("@RegistrationServiceImpl - Registration removed.");
 		
 	}
+
+	@Override
+	public RegistrationEntity getRegistrationByUserAndCourse(UserEntity userEntity, CourseEntity courseEntity) {
+		logger.info("@RegistrationServiceImpl - Getting registration entity by user and course.");
+		return registrationRepository.findByUserEntityAndCourseEntity(userEntity, courseEntity);
+	}
+
+	@Override
+	public List<RegistrationEntity> findRegistrationByCourseEntity(CourseEntity courseEntity) {
+		logger.info("@RegistrationServiceImpl - Finding registration by course.");
+		return registrationRepository.findByCourseEntity(courseEntity);
+	}
 	
 }
